@@ -1,8 +1,9 @@
 package ru.example.emccrafting;
 
 import moze_intel.projecte.api.ItemInfo;
-import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
+import moze_intel.projecte.api.proxy.IEMCProxy;
+import moze_intel.projecte.api.proxy.ITransmutationProxy;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -58,7 +59,7 @@ public final class EmcGridFiller {
             for (int i = 0; i < ings.size(); i++) layout[i] = ings.get(i);
         }
 
-        IKnowledgeProvider provider = ProjectEAPI.getTransmutationProxy().getKnowledgeProviderFor(player.getUUID());
+        IKnowledgeProvider provider = ITransmutationProxy.INSTANCE.getKnowledgeProviderFor(player.getUUID());
         Inventory inv = player.getInventory();
 
         // --- планирование (без изменений мира) ---
@@ -86,7 +87,7 @@ public final class EmcGridFiller {
             for (ItemInfo info : provider.getKnowledge()) {
                 ItemStack cand = info.createStack();
                 if (cand.isEmpty() || !ing.test(cand)) continue;
-                long emc = ProjectEAPI.getEMCProxy().getValue(info);
+                long emc = IEMCProxy.INSTANCE.getValue(info);
                 if (emc > 0 && emc < bestEmc) { bestEmc = emc; best = cand.copyWithCount(1); }
             }
             if (best.isEmpty()) {
